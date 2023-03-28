@@ -2,6 +2,7 @@ package com.geovannycode
 
 import com.geovannycode.entities.DatabaseFactory
 import com.geovannycode.entities.account.AccountTable
+import com.geovannycode.entities.administrator.AdministratorTable
 import com.geovannycode.entities.transaction.TransactionTable
 import com.geovannycode.entities.user.UserTable
 import com.zaxxer.hikari.HikariConfig
@@ -36,7 +37,7 @@ class TestDatabaseFactory : DatabaseFactory {
     object SchemaDefinition{
         fun createSchema(){
             transaction {
-                SchemaUtils.create(UserTable, AccountTable, TransactionTable)
+                SchemaUtils.create(UserTable, AccountTable, TransactionTable, AdministratorTable)
             }
         }
     }
