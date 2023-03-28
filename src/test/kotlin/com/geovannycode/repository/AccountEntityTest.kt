@@ -3,6 +3,7 @@ package com.geovannycode.repository
 import com.geovannycode.TestDatabaseFactory
 import com.geovannycode.entities.account.AccountEntity
 import com.geovannycode.entities.account.AccountTable
+import com.geovannycode.entities.transaction.TransactionEntity
 import com.geovannycode.entities.user.UserEntity
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -146,5 +147,115 @@ internal class AccountEntityTest {
         }
         val current = transaction { AccountEntity.find { AccountTable.accountId eq persistedAccount.accountId }}
         assertThat(current).isNotNull
+    }
+
+    @Test
+    fun `find account also loads origin transactions`() {
+        val user = transaction {
+            UserEntity.new {
+                userId = UUID.randomUUID()
+                firstName = "Geovanny"
+                lastName = "Mendoza"
+                birthdate = LocalDate.of(2000,1,1)
+                password = "test"
+                created = LocalDateTime.of(2023,1,1,1,9)
+                lastUpdated = LocalDateTime.of(2023,1,1,2,9)
+            }
+        }
+
+        val account1 = transaction {
+            AccountEntity.new {
+                name = "My First Account"
+                accountId = UUID.randomUUID()
+                balance = 120.0
+                dispo = -100.0
+                limit = 100.0
+                created = LocalDateTime.of(2023,1,1,1,9)
+                lastUpdated = LocalDateTime.of(2023,1,1,2,9)
+                userEntity = user
+            }
+        }
+
+        val account2 = transaction {
+            AccountEntity.new {
+                name = "My Second Account"
+                accountId = UUID.randomUUID()
+                balance = 120.0
+                dispo = -100.0
+                limit = 100.0
+                created = LocalDateTime.of(2023,1,1,1,9)
+                lastUpdated = LocalDateTime.of(2023,1,1,2,9)
+                userEntity = user
+            }
+        }
+
+        transaction {
+            TransactionEntity.new {
+                transactionId = UUID.randomUUID()
+                originEntity = account1
+                targetEntity = account2
+                amount = 123.0
+                created = LocalDateTime.of(2023,1,3,2,9)
+            }
+        }
+
+        val current = transaction { AccountEntity.find { AccountTable.accountId eq account1.accountId }.first() }
+        assertThat(transaction{ current.originTransactions.count()}).isEqualTo(1)
+        assertThat(transaction{ current.targetTransactions.count()}).isZero
+    }
+
+    @Test
+    fun `find account also loads target transactions`() {
+        val user = transaction {
+            UserEntity.new {
+                userId = UUID.randomUUID()
+                firstName = "Geovanny"
+                lastName = "Mendoza"
+                birthdate = LocalDate.of(2000,1,1)
+                password = "test"
+                created = LocalDateTime.of(2023,1,1,1,9)
+                lastUpdated = LocalDateTime.of(2023,1,1,2,9)
+            }
+        }
+
+        val account1 = transaction {
+            AccountEntity.new {
+                name = "My First Account"
+                accountId = UUID.randomUUID()
+                balance = 120.0
+                dispo = -100.0
+                limit = 100.0
+                created = LocalDateTime.of(2023,1,1,1,9)
+                lastUpdated = LocalDateTime.of(2023,1,1,2,9)
+                userEntity = user
+            }
+        }
+
+        val account2 = transaction {
+            AccountEntity.new {
+                name = "My Second Account"
+                accountId = UUID.randomUUID()
+                balance = 120.0
+                dispo = -100.0
+                limit = 100.0
+                created = LocalDateTime.of(2023,1,1,1,9)
+                lastUpdated = LocalDateTime.of(2023,1,1,2,9)
+                userEntity = user
+            }
+        }
+
+        transaction {
+            TransactionEntity.new {
+                transactionId = UUID.randomUUID()
+                originEntity = account2
+                targetEntity = account1
+                amount = 100.0
+                created = LocalDateTime.of(2023,2,2,2,9)
+            }
+        }
+
+        val current = transaction { AccountEntity.find { AccountTable.accountId eq account1.accountId }.first() }
+        assertThat(transaction{ current.targetTransactions.count()}).isEqualTo(1)
+        assertThat(transaction{ current.originTransactions.count()}).isZero
     }
 }

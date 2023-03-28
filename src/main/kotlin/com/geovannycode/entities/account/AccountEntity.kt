@@ -1,5 +1,7 @@
 package com.geovannycode.entities.account
 
+import com.geovannycode.entities.transaction.TransactionEntity
+import com.geovannycode.entities.transaction.TransactionTable
 import com.geovannycode.entities.user.DEFAULT_VARCHAR_COLUMN_LENGTH
 import com.geovannycode.entities.user.UserEntity
 import com.geovannycode.entities.user.UserTable
@@ -19,6 +21,8 @@ class AccountEntity(id: EntityID<Long>) : LongEntity(id) {
     var created by AccountTable.created
     var lastUpdated by AccountTable.lastUpdated
     var userEntity by UserEntity referencedOn AccountTable.user
+    val originTransactions by TransactionEntity referrersOn TransactionTable.origin
+    val targetTransactions by TransactionEntity referrersOn TransactionTable.target
     companion object : LongEntityClass<AccountEntity>(AccountTable)
 }
 
