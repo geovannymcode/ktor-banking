@@ -38,7 +38,7 @@ dependencies {
     implementation("com.zaxxer:HikariCP:5.0.1")
 
     // H2
-    implementation("com.h2database:h2:2.1.215")
+    implementation("com.h2database:h2:2.1.212")
 
     // testing
     testImplementation("org.junit.jupiter:junit-jupiter:$junitVersion")
