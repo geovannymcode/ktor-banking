@@ -258,4 +258,34 @@ internal class AccountEntityTest {
         assertThat(transaction{ current.targetTransactions.count()}).isEqualTo(1)
         assertThat(transaction{ current.originTransactions.count()}).isZero
     }
+
+    @Test
+    fun `delete user also set relation to account to null`() {
+        val user = transaction {
+            UserEntity.new {
+                userId = UUID.randomUUID()
+                firstName = "Geovanny"
+                lastName = "Mendoza"
+                birthdate = LocalDate.of(2000,1,1)
+                password = "test"
+                created = LocalDateTime.of(2023, 1, 1, 1, 9)
+                lastUpdated = LocalDateTime.of(2023, 1, 1, 2, 9)
+            }
+        }
+
+            val account = transaction {
+                AccountEntity.new {
+                    name = "My Account"
+                    accountId = UUID.randomUUID()
+                    balance = 120.0
+                    dispo = -100.0
+                    limit = 100.0
+                    created = LocalDateTime.of(2023,1,1,1,9)
+                    lastUpdated = LocalDateTime.of(2023,1,1,2,9)
+                    userEntity = user
+                }
+        }
+        transaction { user.delete() }
+        assertThat(transaction { AccountEntity.findById(account.id) }).isNotNull
+    }
 }

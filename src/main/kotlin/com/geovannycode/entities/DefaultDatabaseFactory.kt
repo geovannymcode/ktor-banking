@@ -5,15 +5,19 @@ import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import org.jetbrains.exposed.sql.Database
 
-fun setupDatabase(appConfig: ApplicationConfiguration) {
-    DefaultDatabaseFactory(appConfig).connect()
+fun setupDatabase(appConfig: ApplicationConfiguration): HikariDataSource {
+    val defaultDatabaseFactory = DefaultDatabaseFactory(appConfig)
+    defaultDatabaseFactory.connect()
+    return defaultDatabaseFactory.dataSource
 }
 
 class DefaultDatabaseFactory(appConfig: ApplicationConfiguration) : DatabaseFactory {
 
     private val dbConfig = appConfig.databaseConfig
+    lateinit var dataSource: HikariDataSource
 
     override fun connect() {
+        dataSource = hikari()
         Database.connect(hikari())
     }
 

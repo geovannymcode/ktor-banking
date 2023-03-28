@@ -1,33 +1,33 @@
 package com.geovannycode
 
 import com.geovannycode.entities.DatabaseFactory
-import com.geovannycode.entities.account.AccountTable
-import com.geovannycode.entities.administrator.AdministratorTable
-import com.geovannycode.entities.transaction.TransactionTable
-import com.geovannycode.entities.user.UserTable
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
+import org.h2.tools.RunScript
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.transactions.transaction
+import java.nio.file.Files
+import java.nio.file.Paths
+import kotlin.random.Random
 
 class TestDatabaseFactory : DatabaseFactory {
 
     private lateinit var source: HikariDataSource
     override fun connect() {
+        source = hikari()
         Database.connect(hikari())
-        SchemaDefinition.createSchema()
+        SchemaDefinition.createSchema(source)
     }
 
     private fun hikari(): HikariDataSource{
         val config = HikariConfig()
         config.driverClassName = "org.h2.Driver"
-        config.jdbcUrl = "jdbc:h2:mem:db"
-        config.maximumPoolSize = 10
+        config.jdbcUrl = "jdbc:h2:mem:db${Random.nextLong(10000,99999)}"
+        config.username="root"
+        config.password="password"
+        config.maximumPoolSize = 2
         config.isAutoCommit = true
         config.validate()
-        source = HikariDataSource(config)
-        return source
+        return HikariDataSource(config)
     }
 
     fun close(){
@@ -35,10 +35,12 @@ class TestDatabaseFactory : DatabaseFactory {
     }
 
     object SchemaDefinition{
-        fun createSchema(){
-            transaction {
-                SchemaUtils.create(UserTable, AccountTable, TransactionTable, AdministratorTable)
-            }
+        fun createSchema(dataSource: HikariDataSource){
+            RunScript.execute(
+                dataSource.connection, Files.newBufferedReader(
+                    Paths.get("src/main/resources/db/schema.sql")
+                )
+            )
         }
     }
 }
