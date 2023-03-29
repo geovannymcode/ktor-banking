@@ -18,7 +18,7 @@ class DefaultDatabaseFactory(appConfig: ApplicationConfiguration) : DatabaseFact
 
     override fun connect() {
         dataSource = hikari()
-        Database.connect(hikari())
+        Database.connect(dataSource)
     }
 
     private fun hikari(): HikariDataSource {

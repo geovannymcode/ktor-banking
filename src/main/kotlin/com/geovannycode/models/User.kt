@@ -12,5 +12,5 @@ data class User(
     val password: String,
     val created: LocalDateTime = LocalDateTime.now(),
     val lastUpdated: LocalDateTime = LocalDateTime.now(),
-    val account: List<Account> = emptyList(),
+    val accounts: List<Account> = emptyList(),
 )

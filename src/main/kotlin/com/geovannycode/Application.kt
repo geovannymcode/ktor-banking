@@ -1,6 +1,7 @@
 package com.geovannycode
 
 import com.geovannycode.config.setupApplicationConfiguration
+import com.geovannycode.di.setupKoin
 import com.geovannycode.entities.migrateDatabaseSchema
 import com.geovannycode.entities.setupDatabase
 import com.geovannycode.plugins.configureRouting
@@ -17,6 +18,7 @@ fun Application.module() {
     val applicationConfiguration = setupApplicationConfiguration()
     val dataSource=setupDatabase(applicationConfiguration)
     migrateDatabaseSchema(dataSource)
+    setupKoin()
     configureSecurity()
     configureSerialization()
     configureRouting()

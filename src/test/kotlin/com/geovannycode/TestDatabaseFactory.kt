@@ -11,17 +11,17 @@ import kotlin.random.Random
 
 class TestDatabaseFactory : DatabaseFactory {
 
-    private lateinit var source: HikariDataSource
+   private lateinit var source: HikariDataSource
     override fun connect() {
         source = hikari()
-        Database.connect(hikari())
         SchemaDefinition.createSchema(source)
+        Database.connect(hikari())
     }
 
     private fun hikari(): HikariDataSource{
         val config = HikariConfig()
         config.driverClassName = "org.h2.Driver"
-        config.jdbcUrl = "jdbc:h2:mem:db${Random.nextLong(10000,99999)}"
+        config.jdbcUrl = "jdbc:h2:mem:db${Random.nextLong(10000,99999)};"
         config.username="root"
         config.password="password"
         config.maximumPoolSize = 2
