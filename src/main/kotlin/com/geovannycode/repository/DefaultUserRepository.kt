@@ -5,6 +5,7 @@ import com.geovannycode.entities.user.UserTable
 import com.geovannycode.models.User
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.LocalDateTime
+import java.util.*
 
 class DefaultUserRepository: UserRepository {
     override fun save(user: User): User = transaction {
@@ -12,7 +13,7 @@ class DefaultUserRepository: UserRepository {
         val existingUser = UserEntity.find {
             UserTable.userId eq user.userId }.firstOrNull()
         if (existingUser == null){
-            val id = UserEntity.new {
+             UserEntity.new {
                 userId = user.userId
                 firstName = user.firstName
                 lastName = user.lastName
@@ -20,7 +21,7 @@ class DefaultUserRepository: UserRepository {
                 password = user.password
                 created = currentDateTime
                 lastUpdated = currentDateTime
-            }.id
+            }
             user.copy(
                 created = currentDateTime,
                 lastUpdated = currentDateTime
@@ -35,6 +36,31 @@ class DefaultUserRepository: UserRepository {
             existingUser.lastUpdated = currentDateTime
             user.copy(
                 lastUpdated = currentDateTime
+            )
+        }
+    }
+
+    override fun delete(user: User): Unit = transaction {
+        UserEntity.find {UserTable.userId eq user.userId}.firstOrNull().let{
+            if(it == null){
+                error("User '${user.userId}' does not exist!")
+            }else{
+                it.delete()
+            }
+        }
+    }
+
+    override fun findByUserId(userId: UUID): User? = transaction {
+        UserEntity.find { UserTable.userId eq userId}.firstOrNull()?.let {
+            User(
+                userId = it.userId,
+                firstName = it.firstName,
+                lastName = it.lastName,
+                birthdate = it.birthdate,
+                password = it.password,
+                created = it.created,
+                lastUpdated = it.lastUpdated,
+                accounts = listOf()
             )
         }
     }
