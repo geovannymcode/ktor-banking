@@ -120,36 +120,6 @@ internal class AccountEntityTest {
     }
 
     @Test
-    fun `find account is possible`() {
-        val user = transaction {
-            UserEntity.new {
-                userId = UUID.randomUUID()
-                firstName = "Geovanny"
-                lastName = "Mendoza"
-                birthdate = LocalDate.of(2000,1,1)
-                password = "test"
-                created = LocalDateTime.of(2023,1,1,1,9)
-                lastUpdated = LocalDateTime.of(2023,1,1,2,9)
-            }
-        }
-
-        val persistedAccount = transaction {
-            AccountEntity.new {
-                name = "My Account"
-                accountId = UUID.randomUUID()
-                balance = 120.0
-                dispo = -100.0
-                limit = 100.0
-                created = LocalDateTime.of(2023,1,1,1,9)
-                lastUpdated = LocalDateTime.of(2023,1,1,2,9)
-                userEntity = user
-            }
-        }
-        val current = transaction { AccountEntity.find { AccountTable.accountId eq persistedAccount.accountId }}
-        assertThat(current).isNotNull
-    }
-
-    @Test
     fun `find account also loads origin transactions`() {
         val user = transaction {
             UserEntity.new {
@@ -260,7 +230,7 @@ internal class AccountEntityTest {
     }
 
     @Test
-    fun `delete user also set relation to account to null`() {
+    fun `updating account set user to null possible`() {
         val user = transaction {
             UserEntity.new {
                 userId = UUID.randomUUID()
@@ -285,7 +255,73 @@ internal class AccountEntityTest {
                     userEntity = user
                 }
         }
+        transaction { account.userEntity = null }
+        assertThat(transaction { AccountEntity.findById(account.id)!!.userEntity }).isNull()
+    }
+
+    @Test
+    fun `delete user also set relation to account to null`() {
+
+        val user = transaction {
+            UserEntity.new {
+                userId = UUID.randomUUID()
+                firstName = "Geovanny"
+                lastName = "Mendoza"
+                birthdate = LocalDate.of(2000,1,1)
+                password = "test"
+                created = LocalDateTime.of(2023, 1, 1, 1, 9)
+                lastUpdated = LocalDateTime.of(2023, 1, 1, 2, 9)
+            }
+        }
+
+        val persistedAccount = transaction {
+            AccountEntity.new {
+                name = "My Account"
+                accountId = UUID.randomUUID()
+                balance = 120.0
+                dispo = -100.0
+                limit = 100.0
+                created = LocalDateTime.of(2023, 1, 2, 1, 9)
+                lastUpdated = LocalDateTime.of(2023, 1, 2, 2, 9)
+                userEntity = user
+            }
+        }
+
         transaction { user.delete() }
-        assertThat(transaction { AccountEntity.findById(account.id) }).isNotNull
+
+        assertThat(transaction { AccountEntity.findById(persistedAccount.id) }).isNotNull
+    }
+
+    @Test
+    fun `find account is possible`() {
+
+        val user = transaction {
+            UserEntity.new {
+                userId = UUID.randomUUID()
+                firstName = "Geovanny"
+                lastName = "Mendoza"
+                birthdate = LocalDate.of(2000,1,1)
+                password = "test"
+                created = LocalDateTime.of(2023, 1, 1, 1, 9)
+                lastUpdated = LocalDateTime.of(2023, 1, 1, 2, 9)
+            }
+        }
+
+        val persistedAccount = transaction {
+            AccountEntity.new {
+                name = "My Account"
+                accountId = UUID.randomUUID()
+                balance = 120.0
+                dispo = -100.0
+                limit = 100.0
+                created = LocalDateTime.of(2022, 1, 2, 1, 9)
+                lastUpdated = LocalDateTime.of(2022, 1, 2, 2, 9)
+                userEntity = user
+            }
+        }
+
+        val actual = transaction { AccountEntity.find { AccountTable.accountId eq persistedAccount.accountId } }
+
+        assertThat(actual).isNotNull
     }
 }
