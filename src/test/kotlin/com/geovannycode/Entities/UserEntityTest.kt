@@ -1,4 +1,4 @@
-package com.geovannycode.repository
+package com.geovannycode.Entities
 
 import com.geovannycode.TestDatabaseFactory
 import com.geovannycode.entities.account.AccountEntity

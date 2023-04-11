@@ -1,7 +1,7 @@
 package com.geovannycode.repository
 
 import com.geovannycode.TestDatabaseFactory
-import com.geovannycode.di.bankingAppModule
+import com.geovannycode.di.bankingModule
 import com.geovannycode.entities.user.UserEntity
 import com.geovannycode.entities.user.UserTable
 import com.geovannycode.models.User
@@ -31,7 +31,7 @@ internal class UserRepositoryTest: KoinTest {
     @RegisterExtension
     val koinTestExtension = KoinTestExtension.create {
         modules(
-            bankingAppModule
+            bankingModule
         )
     }
 
@@ -78,13 +78,13 @@ internal class UserRepositoryTest: KoinTest {
         )
         val current = userRepository.save(user)
 
-        userRepository.save(
+        val updatedUser = userRepository.save(
             current.copy(
                 firstName = "Manuel"
             )
         )
 
-        assertThat(current).isNotNull
+        assertThat(updatedUser).isNotNull
         assertThat(transaction { UserEntity.all().count()}).isEqualTo(1)
         assertThat(transaction { UserEntity.find { UserTable.userId eq current.userId }.single().firstName}).isEqualTo("Manuel")
     }
@@ -162,7 +162,7 @@ internal class UserRepositoryTest: KoinTest {
             assertThat(this.firstName).isEqualTo(userNew.firstName)
             assertThat(this.lastName).isEqualTo(userNew.lastName)
             assertThat(this.created.toEpochSecond(UTC)).isEqualTo(
-                userNew.created.toEpochSecond(UTC)
+                userNew.created.toEpochSecond(ZoneOffset.UTC)
             )
             assertThat(this.lastUpdated.toEpochSecond(ZoneOffset.UTC)).isEqualTo(
                 userNew.lastUpdated.toEpochSecond(

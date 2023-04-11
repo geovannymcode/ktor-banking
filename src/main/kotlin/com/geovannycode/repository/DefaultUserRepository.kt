@@ -51,17 +51,15 @@ class DefaultUserRepository: UserRepository {
     }
 
     override fun findByUserId(userId: UUID): User? = transaction {
-        UserEntity.find { UserTable.userId eq userId}.firstOrNull()?.let {
-            User(
-                userId = it.userId,
-                firstName = it.firstName,
-                lastName = it.lastName,
-                birthdate = it.birthdate,
-                password = it.password,
-                created = it.created,
-                lastUpdated = it.lastUpdated,
-                accounts = listOf()
-            )
-        }
+        UserEntity.find { UserTable.userId eq userId}.firstOrNull()?.toUser()
     }
 }
+fun UserEntity.toUser() = User(
+    userId = this.userId,
+    firstName = this.firstName,
+    lastName = this.lastName,
+    birthdate = this.birthdate,
+    password = this.password, created = this.created,
+    lastUpdated = this.lastUpdated,
+    accounts = this.accounts.map { it.toAccount() }
+)

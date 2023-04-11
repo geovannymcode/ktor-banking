@@ -21,8 +21,8 @@ class AccountEntity(id: EntityID<Long>) : LongEntity(id) {
     var created by AccountTable.created
     var lastUpdated by AccountTable.lastUpdated
     var userEntity by UserEntity optionalReferencedOn AccountTable.user
-    val originTransactions by TransactionEntity referrersOn TransactionTable.origin
-    val targetTransactions by TransactionEntity referrersOn TransactionTable.target
+
+
     companion object : LongEntityClass<AccountEntity>(AccountTable)
 }
 
