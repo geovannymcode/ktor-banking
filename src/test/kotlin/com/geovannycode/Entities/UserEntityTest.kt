@@ -5,6 +5,7 @@ import com.geovannycode.entities.account.AccountEntity
 import com.geovannycode.entities.user.UserEntity
 import com.geovannycode.entities.user.UserTable
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -98,7 +99,6 @@ internal class UserEntityTest {
 
     @Test
     fun `find user also loads accounts`() {
-        // given
         val user = transaction {
             UserEntity.new {
                 userId = UUID.randomUUID()
@@ -125,6 +125,33 @@ internal class UserEntityTest {
         val current = transaction { UserEntity.find { UserTable.firstName eq "Geovanny" }.first() }
         assertThat(current).isNotNull
         assertThat(transaction { current.accounts.count()}).isEqualTo(1)
+    }
+
+    @Test
+    fun `creating new user is not possible with duplicate userId`() {
+        val persistedUser = transaction {
+            UserEntity.new {
+                userId = UUID.randomUUID()
+                firstName = "Geovanny"
+                lastName = "Mendoza"
+                birthdate = LocalDate.of(2002, 1, 1)
+                password = "passw0rd"
+                created = LocalDateTime.of(2022, 1, 1, 1, 9)
+                lastUpdated = LocalDateTime.of(2022, 1, 1, 2, 9)
+            }
+        }
+
+        assertThatThrownBy {
+            transaction {
+                UserEntity.new {
+                    userId = persistedUser.userId
+                    firstName = "Geovanny"
+                    lastName = "Mendoza"
+                    created = LocalDateTime.of(2022, 1, 1, 1, 9)
+                    lastUpdated = LocalDateTime.of(2022, 1, 1, 2, 9)
+                }
+            }
+        }
     }
 
 }

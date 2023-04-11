@@ -12,6 +12,7 @@ CREATE TABLE `user`
     `created`      DATETIME                        NOT NULL,
     `last_updated` DATETIME                        NOT NULL
 );
+
 CREATE TABLE `account`
 (
     `id`           LONG PRIMARY KEY AUTO_INCREMENT NOT NULL,
@@ -25,6 +26,7 @@ CREATE TABLE `account`
     `user_id`      LONG,
     FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON UPDATE cascade ON DELETE SET NULL
 );
+
 CREATE TABLE `transaction`
 (
     `id`             LONG PRIMARY KEY AUTO_INCREMENT NOT NULL,
@@ -36,6 +38,7 @@ CREATE TABLE `transaction`
     FOREIGN KEY (`origin`) REFERENCES `account` (`account_id`) ON UPDATE CASCADE ON DELETE RESTRICT,
     FOREIGN KEY (`target`) REFERENCES `account` (`account_id`) ON UPDATE CASCADE ON DELETE RESTRICT
 );
+
 CREATE TABLE `administrator`
 (
     `id`       LONG PRIMARY KEY AUTO_INCREMENT NOT NULL,
@@ -43,3 +46,8 @@ CREATE TABLE `administrator`
     `name`     VARCHAR(255)                    NOT NULL,
     `password` VARCHAR(255)                    NOT NULL
 );
+
+-- changeset liquibase:2
+ALTER TABLE `user` ADD UNIQUE (`user_id`);
+ALTER TABLE `account` ADD UNIQUE (`account_id`);
+ALTER TABLE `transaction` ADD UNIQUE (`transaction_id`);
