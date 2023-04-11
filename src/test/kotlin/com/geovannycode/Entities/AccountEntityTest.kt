@@ -366,4 +366,103 @@ internal class AccountEntityTest {
             }
         }
     }
+    @Test
+    fun `creating new account is not possible with duplicate name`() {
+        // given
+        val user = transaction {
+            UserEntity.new {
+                userId = UUID.randomUUID()
+                firstName = "John"
+                lastName = "Doe"
+                birthdate = LocalDate.of(2000, 1, 1)
+                password = "passw0rd"
+                created = LocalDateTime.of(2022, 1, 1, 1, 9)
+                lastUpdated = LocalDateTime.of(2022, 1, 1, 2, 9)
+            }
+        }
+
+        transaction {
+            AccountEntity.new {
+                name = "My Account"
+                accountId = UUID.randomUUID()
+                balance = 120.0
+                dispo = -100.0
+                limit = 100.0
+                created = LocalDateTime.of(2022, 1, 2, 1, 9)
+                lastUpdated = LocalDateTime.of(2022, 1, 2, 2, 9)
+                userEntity = user
+            }
+        }
+
+        // when + then
+        assertThatThrownBy {
+            transaction {
+                AccountEntity.new {
+                    name = "My Account"
+                    accountId = UUID.randomUUID()
+                    balance = 120.0
+                    dispo = -100.0
+                    limit = 100.0
+                    created = LocalDateTime.of(2022, 1, 2, 1, 9)
+                    lastUpdated = LocalDateTime.of(2022, 1, 2, 2, 9)
+                    userEntity = user
+                }
+            }
+        }
+    }
+
+    @Test
+    fun `creating new account is possible with duplicate name for different user`() {
+        val user = transaction {
+            UserEntity.new {
+                userId = UUID.randomUUID()
+                firstName = "Geovanny"
+                lastName = "Mendoza"
+                birthdate = LocalDate.of(2002, 1, 1)
+                password = "passw0rd"
+                created = LocalDateTime.of(2022, 1, 1, 1, 9)
+                lastUpdated = LocalDateTime.of(2022, 1, 1, 2, 9)
+            }
+        }
+
+        val otherUser = transaction {
+            UserEntity.new {
+                userId = UUID.randomUUID()
+                firstName = "Manuel"
+                lastName = "Mendoza"
+                birthdate = LocalDate.of(2002, 1, 1)
+                password = "passw0rd"
+                created = LocalDateTime.of(2022, 1, 1, 1, 9)
+                lastUpdated = LocalDateTime.of(2022, 1, 1, 2, 9)
+            }
+        }
+
+        transaction {
+            AccountEntity.new {
+                name = "My Account"
+                accountId = UUID.randomUUID()
+                balance = 120.0
+                dispo = -100.0
+                limit = 100.0
+                created = LocalDateTime.of(2022, 1, 2, 1, 9)
+                lastUpdated = LocalDateTime.of(2022, 1, 2, 2, 9)
+                userEntity = user
+            }
+        }
+
+        val persistedAccount = transaction {
+            AccountEntity.new {
+                name = "My Account"
+                accountId = UUID.randomUUID()
+                balance = 120.0
+                dispo = -100.0
+                limit = 100.0
+                created = LocalDateTime.of(2022, 1, 2, 1, 9)
+                lastUpdated = LocalDateTime.of(2022, 1, 2, 2, 9)
+                userEntity = otherUser
+            }
+        }
+
+        assertThat(transaction { AccountEntity.findById(persistedAccount.id) }).isNotNull
+    }
 }
