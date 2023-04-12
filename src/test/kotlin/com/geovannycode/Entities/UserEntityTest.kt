@@ -154,4 +154,31 @@ internal class UserEntityTest {
         }
     }
 
+    @Test
+    fun `creating new user is not possible with duplicate firstname, password and birthdate`() {
+        transaction {
+            UserEntity.new {
+                userId = UUID.randomUUID()
+                firstName = "Geovanny"
+                lastName = "Mendoza"
+                birthdate = LocalDate.of(2002, 1, 1)
+                password = "passw0rd"
+                created = LocalDateTime.of(2022, 1, 1, 1, 9)
+                lastUpdated = LocalDateTime.of(2022, 1, 1, 2, 9)
+            }
+        }
+        assertThatThrownBy {
+            transaction {
+                UserEntity.new {
+                    userId = UUID.randomUUID()
+                    firstName = "Geovanny"
+                    lastName = "Mendoza"
+                    birthdate = LocalDate.of(2002, 1, 1)
+                    password = "passw0rd"
+                    created = LocalDateTime.of(2022, 1, 1, 1, 9)
+                    lastUpdated = LocalDateTime.of(2022, 1, 1, 2, 9)
+                }
+            }
+        }
+    }
 }

@@ -22,7 +22,6 @@ class AccountEntity(id: EntityID<Long>) : LongEntity(id) {
     var lastUpdated by AccountTable.lastUpdated
     var userEntity by UserEntity optionalReferencedOn AccountTable.user
 
-
     companion object : LongEntityClass<AccountEntity>(AccountTable)
 }
 
@@ -35,5 +34,7 @@ object AccountTable : LongIdTable("account", "id") {
     val created = datetime("created")
     val lastUpdated = datetime("last_updated")
     val user = reference("user_id", UserTable).nullable()
-
+    init {
+        uniqueIndex(name, user)
+    }
 }
