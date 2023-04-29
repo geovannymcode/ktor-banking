@@ -9,4 +9,5 @@ enum class ErrorCode {
     DATABASE_ERROR,
     MAPPING_ERROR,
     USER_NOT_FOUND,
+    PASSWORD_ERROR
 }

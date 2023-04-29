@@ -10,4 +10,5 @@ interface UserService {
     fun deleteUser(userId: String?): ApiResult<UUID>
     fun updateUser(userDto: UserDto): ApiResult<UUID>
     fun findUserByUserId(userId: UUID): ApiResult<UserOverviewDto>
+    fun updatePassword(userId: UUID, existingPassword: String, newPassword: String): ApiResult<UUID>
 }

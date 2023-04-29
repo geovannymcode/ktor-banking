@@ -71,14 +71,14 @@ class DefaultUserService(
     }
 
     override fun updateUser(userDto: UserDto): ApiResult<UUID> {
-        logger.info("Start updating user '$userDto'")
+        logger.info("Start updating user '$userDto'.")
         val user = try {
             userDto.toUser()
         } catch (e: InvalidInputException) {
             logger.error("Unable to map given dto '$userDto' to domain object.", e)
             return ApiResult.Failure(
                 ErrorCode.MAPPING_ERROR,
-                e.message ?: "Undefined error during mapping occurred."
+                e.getErrorMessage()
             )
         }
         return try {
@@ -87,7 +87,7 @@ class DefaultUserService(
             ApiResult.Success(user.userId)
         } catch (e: Exception) {
             logger.error("Unable to update user '$userDto' to database.", e)
-            ApiResult.Failure(ErrorCode.DATABASE_ERROR, e.message ?: "Undefined error during persistence occurred.")
+            ApiResult.Failure(ErrorCode.DATABASE_ERROR, e.getErrorMessage())
         }
 
     }
@@ -97,16 +97,57 @@ class DefaultUserService(
         return try {
             val user = userRepository.findByUserId(userId)
             if (user == null) {
+                logger.error("User with userId '$userId' does not exist in database.")
                 ApiResult.Failure(ErrorCode.USER_NOT_FOUND, "User with userId '$userId' not found.")
             } else {
+                logger.info("Successfully found user with userId '$userId'.")
                 ApiResult.Success(user.toUserOverviewDto())
             }
         } catch (e: Exception) {
             logger.error("Unable to find user with userId '$userId' from database.'", e)
             ApiResult.Failure(
                 ErrorCode.DATABASE_ERROR,
-                e.message ?: "Undefined error during finding user in database occurred."
+                e.getErrorMessage()
             )
+        }
+    }
+
+    override fun updatePassword(userId: UUID, existingPassword: String, newPassword: String): ApiResult<UUID> {
+        logger.info("Start updating password for user with userId '$userId'.")
+        val user = try {
+            val existingUser = userRepository.findByUserId(userId)
+            if (existingUser == null) {
+                logger.error("User with userId '$userId' not found in database.")
+                return ApiResult.Failure(ErrorCode.USER_NOT_FOUND, "For the given userId '$userId' no user exist.")
+            }
+            existingUser
+        } catch (e: Exception) {
+            logger.error("Unable to find user with userId '$userId' from database.'", e)
+            return ApiResult.Failure(
+                ErrorCode.DATABASE_ERROR,
+                e.getErrorMessage()
+            )
+        }
+        if (existingPassword == newPassword) {
+            logger.error("The given new password cannot be the same as the existing one.")
+            return ApiResult.Failure(
+                ErrorCode.PASSWORD_ERROR,
+                "The new password cannot be the same as the existing one."
+            )
+        }
+        return try {
+            val updatedUser = user.copy(
+                password = newPassword
+            )
+            val result = userRepository.save(updatedUser)
+            logger.info("Successfully updated password for user with userId '$userId'.")
+            ApiResult.Success(result.userId)
+        } catch (e: IllegalArgumentException) {
+            logger.error("Password does not fulfill the requirements.", e)
+            ApiResult.Failure(ErrorCode.PASSWORD_ERROR, e.getErrorMessage())
+        } catch (e: Exception) {
+            logger.error("Unable to update user '$user' to database.", e)
+            ApiResult.Failure(ErrorCode.DATABASE_ERROR, e.getErrorMessage())
         }
     }
 
