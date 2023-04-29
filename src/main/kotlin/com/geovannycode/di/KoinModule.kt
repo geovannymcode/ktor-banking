@@ -6,6 +6,8 @@ import com.geovannycode.repository.TransactionRepository
 import com.geovannycode.repository.DefaultTransactionRepository
 import com.geovannycode.repository.DefaultUserRepository
 import com.geovannycode.repository.DefaultAccountRepository
+import com.geovannycode.service.AccountService
+import com.geovannycode.service.DefaultAccountService
 import com.geovannycode.service.DefaultUserService
 import com.geovannycode.service.UserService
 import io.ktor.server.application.Application
@@ -19,6 +21,7 @@ val bankingModule = module {
     single<AccountRepository> { DefaultAccountRepository() }
     single<TransactionRepository> { DefaultTransactionRepository() }
     single<UserService> { DefaultUserService(get()) }
+    single<AccountService> { DefaultAccountService(get(), get()) }
 }
 
 fun Application.setupKoin() {

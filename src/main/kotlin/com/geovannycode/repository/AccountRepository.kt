@@ -8,5 +8,7 @@ interface AccountRepository {
     fun saveForUser(user: User, account: Account): Account
 
     fun delete(account: Account)
+
+    fun updateForUser(user: User, account: Account): Account
 }
 

@@ -93,7 +93,7 @@ class AccountRepositoryTest : KoinTest {
     }
 
     @Test
-    fun `save updates existing account to database`() {
+    fun `save fails if account exist in database`() {
         val user = User(
             userId = UUID.randomUUID(),
             firstName = "Geovanny",
@@ -113,18 +113,13 @@ class AccountRepositoryTest : KoinTest {
         )
         val persistedAccount = accountRepository.saveForUser(persistedUser, account)
 
-        val updatedAccount = accountRepository.saveForUser(
-            persistedUser, persistedAccount.copy(
-                name = "My other account"
+        assertThatThrownBy {
+            accountRepository.saveForUser(
+                persistedUser, persistedAccount
             )
+        }.isInstanceOf(
+            IllegalStateException::class.java
         )
-
-        assertThat(updatedAccount).isNotNull
-        assertThat(transaction { AccountEntity.all().count() }).isEqualTo(1)
-        assertThat(transaction {
-            AccountEntity.find { AccountTable.accountId eq updatedAccount.accountId }.single().name
-        })
-            .isEqualTo("My other account")
     }
 
     @Test
@@ -179,5 +174,84 @@ class AccountRepositoryTest : KoinTest {
         assertThatThrownBy {
             accountRepository.delete(account)
         }.isInstanceOf(IllegalStateException::class.java)
+    }
+
+    @Test
+    fun `update throws exception if user is not available in database`() {
+        val user = User(
+            userId = UUID.randomUUID(),
+            firstName = "Geovanny",
+            lastName = "Mendoza",
+            birthdate = LocalDate.of(2002, 1, 1),
+            password = "Ta1&tudol3lal54e",
+            accounts = listOf()
+        )
+
+        val account = Account(
+            name = "My account",
+            accountId = UUID.randomUUID(),
+            balance = 120.0,
+            dispo = -1000.0,
+            limit = 1000.0,
+        )
+        assertThatThrownBy { accountRepository.updateForUser(user, account) }.isInstanceOf(
+            IllegalStateException::class.java
+        )
+    }
+
+    @Test
+    fun `update throws exception if account is not available in database`() {
+        val user = User(
+            userId = UUID.randomUUID(),
+            firstName = "John",
+            lastName = "Doe",
+            birthdate = LocalDate.of(2000, 1, 1),
+            password = "Ta1&tudol3lal54e",
+            accounts = listOf()
+        )
+        val persistedUser = userRepository.save(user)
+
+        val account = Account(
+            name = "My account",
+            accountId = UUID.randomUUID(),
+            balance = 120.0,
+            dispo = -1000.0,
+            limit = 1000.0,
+        )
+        assertThatThrownBy { accountRepository.updateForUser(persistedUser, account) }.isInstanceOf(
+            IllegalStateException::class.java
+        )
+    }
+
+    @Test
+    fun `update persists changes of account to database`() {
+        val user = User(
+            userId = UUID.randomUUID(),
+            firstName = "Geovanny",
+            lastName = "Mendoza",
+            birthdate = LocalDate.of(2002, 1, 1),
+            password = "Ta1&tudol3lal54e",
+            accounts = listOf()
+        )
+        val persistedUser = userRepository.save(user)
+
+        val account = Account(
+            name = "My account",
+            accountId = UUID.randomUUID(),
+            balance = 120.0,
+            dispo = -1000.0,
+            limit = 1000.0,
+        )
+        accountRepository.saveForUser(persistedUser, account)
+        val actual = accountRepository.updateForUser(
+            persistedUser, account.copy(
+                name = "Other Account"
+            )
+        )
+
+        assertThat(actual).isNotNull
+        assertThat(transaction {
+            AccountEntity.find { AccountTable.accountId eq actual.accountId }.single().name
+        }).isEqualTo("Other Account")
     }
 }

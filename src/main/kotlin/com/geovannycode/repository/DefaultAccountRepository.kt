@@ -11,11 +11,11 @@ import java.time.LocalDateTime
 
 class DefaultAccountRepository : AccountRepository {
     override fun saveForUser(user: User, account: Account): Account = transaction {
-        val existingUser = UserEntity.find { UserTable.userId eq user.userId }.firstOrNull()?: error("User '${user.userId}' not persisted yet!")
+        val existingUser = UserEntity.find { UserTable.userId eq user.userId }.firstOrNull()?: error("User with userId '${user.userId}' not persisted yet!")
         val currentDateTime = LocalDateTime.now()
         val existingAccount = AccountEntity.find { AccountTable.accountId eq account.accountId }.singleOrNull()
         if(existingAccount==null){
-            val accountEntity = AccountEntity.new {
+             AccountEntity.new {
                 accountId = account.accountId
                 name= account.name
                 balance=account.balance
@@ -30,15 +30,7 @@ class DefaultAccountRepository : AccountRepository {
                 lastUpdated = currentDateTime
             )
         }else{
-            existingAccount.accountId= account.accountId
-            existingAccount.name= account.name
-            existingAccount.balance= account.balance
-            existingAccount.dispo = account.dispo
-            existingAccount.limit = account.limit
-            existingAccount.lastUpdated = currentDateTime
-            account.copy(
-                lastUpdated = currentDateTime
-            )
+            error("User with userId '${user.userId} already exists.")
         }
     }
 
@@ -50,6 +42,25 @@ class DefaultAccountRepository : AccountRepository {
                it.userEntity = null
            }
        }
+    }
+
+    override fun updateForUser(user: User, account: Account): Account = transaction {
+        val existingUser = UserEntity.find { UserTable.userId eq user.userId }.firstOrNull()
+            ?: error("User with userId '${user.userId}' not persisted yet!")
+        val currentDateTime = LocalDateTime.now()
+        val existingAccount = AccountEntity.find { AccountTable.accountId eq account.accountId }.firstOrNull()
+            ?: error("Account with accountId '${account.accountId} not persisted yet! ")
+
+        existingAccount.accountId = account.accountId
+        existingAccount.name = account.name
+        existingAccount.balance = account.balance
+        existingAccount.dispo = account.dispo
+        existingAccount.limit = account.limit
+        existingAccount.lastUpdated = currentDateTime
+        existingAccount.userEntity = existingUser
+        account.copy(
+            lastUpdated = currentDateTime
+        )
     }
 }
 
