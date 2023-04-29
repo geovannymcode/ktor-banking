@@ -52,7 +52,7 @@ class TransactionRepositoryTest : KoinTest {
             firstName = "Geovanny",
             lastName = "Mendoza",
             birthdate = LocalDate.of(2002, 1, 1),
-            password = "passw0rd",
+            password = "Ta1&tudol3lal54e",
             accounts = listOf()
         )
         val persistedUser = userRepository.save(user)
@@ -96,7 +96,7 @@ class TransactionRepositoryTest : KoinTest {
             firstName = "Geovanny",
             lastName = "Mendoza",
             birthdate = LocalDate.of(2002, 1, 1),
-            password = "passw0rd",
+            password = "Ta1&tudol3lal54e",
             accounts = listOf()
         )
         val persistedUser = userRepository.save(user)
@@ -134,7 +134,7 @@ class TransactionRepositoryTest : KoinTest {
             firstName = "Geovanny",
             lastName = "Mendoza",
             birthdate = LocalDate.of(2002, 1, 1),
-            password = "passw0rd",
+            password = "Ta1&tudol3lal54e",
             accounts = listOf()
         )
         val persistedUser = userRepository.save(user)
@@ -172,7 +172,7 @@ class TransactionRepositoryTest : KoinTest {
             firstName = "Geovanny",
             lastName = "Mendoza",
             birthdate = LocalDate.of(2002, 1, 1),
-            password = "passw0rd",
+            password = "Ta1&tudol3lal54e",
             accounts = listOf()
         )
         val persistedUser = userRepository.save(user)
@@ -212,7 +212,7 @@ class TransactionRepositoryTest : KoinTest {
             firstName = "Geovanny",
             lastName = "Mendoza",
             birthdate = LocalDate.of(2002, 1, 1),
-            password = "passw0rd",
+            password = "Ta1&tudol3lal54e",
             accounts = listOf()
         )
         val persistedUser = userRepository.save(user)
@@ -254,7 +254,7 @@ class TransactionRepositoryTest : KoinTest {
             firstName = "Geovanny",
             lastName = "Mendoza",
             birthdate = LocalDate.of(2002, 1, 1),
-            password = "passw0rd",
+            password = "Ta1&tudol3lal54e",
             accounts = listOf()
         )
         val persistedUser = userRepository.save(user)
@@ -296,7 +296,7 @@ class TransactionRepositoryTest : KoinTest {
             firstName = "Geovanny",
             lastName = "Mendoza",
             birthdate = LocalDate.of(2002, 1, 1),
-            password = "passw0rd",
+            password = "Ta1&tudol3lal54e",
             accounts = listOf()
         )
         val persistedUser = userRepository.save(user)
@@ -306,7 +306,7 @@ class TransactionRepositoryTest : KoinTest {
             firstName = "Manuel",
             lastName = "Gonzalez",
             birthdate = LocalDate.of(2002, 1, 1),
-            password = "passw0rd",
+            password = "Ta1&tudol3lal54e",
             accounts = listOf()
         )
         val persistedOtherUser = userRepository.save(otherUser)

@@ -51,7 +51,7 @@ class AccountRepositoryTest : KoinTest {
             firstName = "Geovanny",
             lastName = "Mendoza",
             birthdate = LocalDate.of(2002, 1, 1),
-            password = "passw0rd",
+            password = "Ta1&tudol3lal54e",
             accounts = listOf()
         )
         val persistedUser = userRepository.save(user)
@@ -76,7 +76,7 @@ class AccountRepositoryTest : KoinTest {
             firstName = "Geovanny",
             lastName = "Mendoza",
             birthdate = LocalDate.of(2002, 1, 1),
-            password = "passw0rd",
+            password = "Ta1&tudol3lal54e",
             accounts = listOf()
         )
 
@@ -99,7 +99,7 @@ class AccountRepositoryTest : KoinTest {
             firstName = "Geovanny",
             lastName = "Mendoza",
             birthdate = LocalDate.of(2002, 1, 1),
-            password = "passw0rd",
+            password = "Ta1&tudol3lal54e",
             accounts = listOf()
         )
         val persistedUser = userRepository.save(user)
@@ -134,7 +134,7 @@ class AccountRepositoryTest : KoinTest {
             firstName = "John",
             lastName = "Doe",
             birthdate = LocalDate.of(2000, 1, 1),
-            password = "passw0rd",
+            password = "Ta1&tudol3lal54e",
             accounts = listOf()
         )
         val persistedUser = userRepository.save(user)
@@ -163,7 +163,7 @@ class AccountRepositoryTest : KoinTest {
             firstName = "Geovanny",
             lastName = "Mendoza",
             birthdate = LocalDate.of(2002, 1, 1),
-            password = "passw0rd",
+            password = "Ta1&tudol3lal54e",
             accounts = listOf()
         )
         userRepository.save(user)

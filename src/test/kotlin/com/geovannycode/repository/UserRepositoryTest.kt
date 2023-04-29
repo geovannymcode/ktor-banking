@@ -53,7 +53,7 @@ internal class UserRepositoryTest: KoinTest {
                 firstName = "Geovanny",
                 lastName = "Mendoza",
                 birthdate = LocalDate.of(2000,1,1),
-                password = "test",
+                password = "Ta1&tudol3lal54e",
                 created = LocalDateTime.of(2023,1,1,1,0,0),
                 lastUpdated = LocalDateTime.of(2023,1,2,1,0,0),
                 accounts = listOf()
@@ -71,7 +71,7 @@ internal class UserRepositoryTest: KoinTest {
             firstName = "Geovanny",
             lastName = "Mendoza",
             birthdate = LocalDate.of(2000,1,1),
-            password = "test",
+            password = "Ta1&tudol3lal54e",
             created = LocalDateTime.of(2023,1,1,1,0,0),
             lastUpdated = LocalDateTime.of(2023,1,2,1,0,0),
             accounts = listOf()
@@ -96,7 +96,7 @@ internal class UserRepositoryTest: KoinTest {
             firstName = "Geovanny",
             lastName = "Mendoza",
             birthdate = LocalDate.of(2000,1,1),
-            password = "test",
+            password = "Ta1&tudol3lal54e",
             created = LocalDateTime.of(2023,1,1,1,0,0),
             lastUpdated = LocalDateTime.of(2023,1,2,1,0,0),
             accounts = listOf()
@@ -116,7 +116,7 @@ internal class UserRepositoryTest: KoinTest {
             firstName = "Geovanny",
             lastName = "Mendoza",
             birthdate = LocalDate.of(2000,1,1),
-            password = "test",
+            password = "Ta1&tudol3lal54e",
             created = LocalDateTime.of(2023,1,1,1,0,0),
             lastUpdated = LocalDateTime.of(2023,1,2,1,0,0),
             accounts = listOf()
@@ -132,7 +132,7 @@ internal class UserRepositoryTest: KoinTest {
             firstName = "Geovanny",
             lastName = "Mendoza",
             birthdate = LocalDate.of(2000,1,1),
-            password = "test",
+            password = "Ta1&tudol3lal54e",
             created = LocalDateTime.of(2023,1,1,1,0,0),
             lastUpdated = LocalDateTime.of(2023,1,2,1,0,0),
             accounts = listOf()
@@ -148,7 +148,7 @@ internal class UserRepositoryTest: KoinTest {
             firstName = "Geovanny",
             lastName = "Mendoza",
             birthdate = LocalDate.of(2000,1,1),
-            password = "test",
+            password = "Ta1&tudol3lal54e",
             created = LocalDateTime.of(2023,1,1,1,0,0),
             lastUpdated = LocalDateTime.of(2023,1,2,1,0,0),
             accounts = listOf()
