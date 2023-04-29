@@ -236,12 +236,47 @@ internal class UserServiceTest : KoinTest {
                 password = "NOT VALID"
             )
         )
-
-
-        // then
         assertThat(actual).isInstanceOf(ApiResult.Failure::class.java)
         assertThat((actual as ApiResult.Failure).errorCode).isEqualTo(ErrorCode.MAPPING_ERROR)
         assertThat(userRepository.findByUserId(apiResult.value)!!.firstName).isEqualTo("Geovanny")
         assertThat(userRepository.findByUserId(apiResult.value)!!.lastName).isEqualTo("Mendoza")
+    }
+
+    @Test
+    fun  `findUserBy is possible`(){
+        val user = UserDto(
+            firstName = "Geovanny",
+            lastName = "Mendoza",
+            birthDate = "20.02.1999",
+            password = "Ta1&tudol3lal54e"
+        )
+        val apiResult = userService.createUser(user)
+        val actual = userService.findUserByUserId((apiResult as ApiResult.Success).value)
+
+        assertThat(actual).isInstanceOf(ApiResult.Success::class.java)
+        (actual as ApiResult.Success).value.apply {
+            assertThat(this.userId).isEqualByComparingTo(apiResult.value)
+            assertThat(this.firstName).isEqualTo("Geovanny")
+            assertThat(this.lastName).isEqualTo("Mendoza")
+            assertThat(this.birthdate).isEqualTo("20.02.1999")
+            assertThat(this.password).isEqualTo("Ta1&tudol3lal54e")
+            assertThat(this.created).isNotBlank
+            assertThat(this.lastUpdated).isNotBlank
+            assertThat(this.account).isEmpty()
+        }
+    }
+
+    @Test
+    fun  `findUserBy fails if user not available in database`(){
+        val user = UserDto(
+            firstName = "Geovanny",
+            lastName = "Mendoza",
+            birthDate = "20.02.1999",
+            password = "Ta1&tudol3lal54e"
+        )
+        userService.createUser(user)
+        val actual = userService.findUserByUserId(UUID.randomUUID())
+        assertThat(actual).isInstanceOf(ApiResult.Failure::class.java)
+        assertThat((actual as ApiResult.Failure).errorCode).isEqualTo(ErrorCode.USER_NOT_FOUND)
     }
 }
