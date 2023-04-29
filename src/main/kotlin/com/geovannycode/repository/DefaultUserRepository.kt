@@ -5,7 +5,7 @@ import com.geovannycode.entities.user.UserTable
 import com.geovannycode.models.User
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.LocalDateTime
-import java.util.*
+import java.util.UUID
 
 class DefaultUserRepository: UserRepository {
     override fun save(user: User): User = transaction {

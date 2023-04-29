@@ -1,7 +1,5 @@
 package com.geovannycode.entities.account
 
-import com.geovannycode.entities.transaction.TransactionEntity
-import com.geovannycode.entities.transaction.TransactionTable
 import com.geovannycode.entities.user.DEFAULT_VARCHAR_COLUMN_LENGTH
 import com.geovannycode.entities.user.UserEntity
 import com.geovannycode.entities.user.UserTable

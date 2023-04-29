@@ -8,6 +8,7 @@ import com.geovannycode.models.User
 import io.ktor.util.reflect.*
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -20,7 +21,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.ZoneOffset.UTC
-import java.util.*
+import java.util.UUID
 
 internal class UserRepositoryTest: KoinTest {
 
@@ -171,5 +172,30 @@ internal class UserRepositoryTest: KoinTest {
             )
             assertThat(this.accounts).isEmpty()
         }
+    }
+
+
+    @Test
+    fun `save fails if user with firstname, lastname and birthdate already exists`() {
+        val user = User(
+            userId = UUID.randomUUID(),
+            firstName = "Geovanny",
+            lastName = "Mendoza",
+            birthdate = LocalDate.of(2000, 1, 1),
+            password = "Ta1&tudol3lal54e",
+            created = LocalDateTime.of(
+                2022, 1, 1, 1, 0, 0
+            ),
+            lastUpdated = LocalDateTime.of(2022, 1, 2, 1, 0, 0),
+            accounts = listOf()
+        )
+         userRepository.save(user)
+        assertThatThrownBy {
+            userRepository.save(
+                user.copy(
+                    userId = UUID.randomUUID()
+                )
+            )
+        }.isInstanceOf(ExposedSQLException::class.java)
     }
 }

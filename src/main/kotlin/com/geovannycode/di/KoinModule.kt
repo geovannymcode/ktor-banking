@@ -1,6 +1,11 @@
 package com.geovannycode.di
 
-import com.geovannycode.repository.*
+import com.geovannycode.repository.UserRepository
+import com.geovannycode.repository.AccountRepository
+import com.geovannycode.repository.TransactionRepository
+import com.geovannycode.repository.DefaultTransactionRepository
+import com.geovannycode.repository.DefaultUserRepository
+import com.geovannycode.repository.DefaultAccountRepository
 import com.geovannycode.service.DefaultUserService
 import com.geovannycode.service.UserService
 import io.ktor.server.application.Application

@@ -17,7 +17,7 @@ import org.koin.test.KoinTest
 import org.koin.test.inject
 import org.koin.test.junit5.KoinTestExtension
 import java.time.LocalDate
-import java.util.*
+import java.util.UUID
 
 class AccountRepositoryTest : KoinTest {
 

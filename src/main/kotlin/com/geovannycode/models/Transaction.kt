@@ -1,7 +1,7 @@
 package com.geovannycode.models
 
 import java.time.LocalDateTime
-import java.util.*
+import java.util.UUID
 
 data class Transaction(
     val transactionId: UUID = UUID.randomUUID(),
