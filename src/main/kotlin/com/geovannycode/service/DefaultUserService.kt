@@ -70,6 +70,28 @@ class DefaultUserService(
         }
     }
 
+    override fun updateUser(userDto: UserDto): ApiResult<UUID> {
+        logger.info("Start updating user '$userDto'")
+        val user = try {
+            userDto.toUser()
+        } catch (e: InvalidInputException) {
+            logger.error("Unable to map given dto '$userDto' to domain object.", e)
+            return ApiResult.Failure(
+                ErrorCode.MAPPING_ERROR,
+                e.message ?: "Undefined error during mapping occurred."
+            )
+        }
+        return try {
+            userRepository.save(user)
+            logger.info("Successfully updated user '$user'.")
+            ApiResult.Success(user.userId)
+        } catch (e: Exception) {
+            logger.error("Unable to update user '$userDto' to database.", e)
+            ApiResult.Failure(ErrorCode.DATABASE_ERROR, e.message ?: "Undefined error during persistence occurred.")
+        }
+
+    }
+
     private fun parseBirthdate(birthdate: String): LocalDate {
         try {
             return LocalDate.parse(birthdate, DateTimeFormatter.ofPattern(BIRTH_DATE_FORMAT))

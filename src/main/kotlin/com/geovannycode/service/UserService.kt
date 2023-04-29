@@ -7,4 +7,5 @@ import java.util.UUID
 interface UserService {
     fun createUser(userDto: UserDto): ApiResult<UUID>
     fun deleteUser(userId: String?): ApiResult<UUID>
+    fun updateUser(userDto: UserDto): ApiResult<UUID>
 }

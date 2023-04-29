@@ -5,6 +5,7 @@ import com.geovannycode.di.bankingModule
 import com.geovannycode.dto.ApiResult
 import com.geovannycode.dto.ErrorCode
 import com.geovannycode.dto.UserDto
+import com.geovannycode.repository.UserRepository
 import com.geovannycode.service.UserService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
@@ -14,12 +15,13 @@ import org.junit.jupiter.api.extension.RegisterExtension
 import org.koin.test.KoinTest
 import org.koin.test.inject
 import org.koin.test.junit5.KoinTestExtension
-import java.util.*
+import java.util.UUID
 
 internal class UserServiceTest : KoinTest {
 
     private lateinit var databaseFactory: TestDatabaseFactory
     private val userService by inject<UserService>()
+    private val userRepository by inject<UserRepository>()
 
     @JvmField
     @RegisterExtension
@@ -193,5 +195,53 @@ internal class UserServiceTest : KoinTest {
         val actual = userService.deleteUser(userId)
         assertThat(actual).isInstanceOf(ApiResult.Failure::class.java)
         assertThat((actual as ApiResult.Failure).errorCode).isEqualTo(ErrorCode.MAPPING_ERROR)
+    }
+
+    @Test
+    fun `update existing user is possible`() {
+        val user = UserDto(
+            firstName = "Geovanny",
+            lastName = "Mendoza",
+            birthDate = "20.02.1999",
+            password = "Ta1&tudol3lal54e"
+        )
+        val apiResult = userService.createUser(user)
+        val actual = userService.updateUser(
+            user.copy(
+                userId = (apiResult as ApiResult.Success).value,
+                firstName = "Manuel",
+                lastName = "Gonzalez"
+            )
+        )
+        assertThat(actual).isInstanceOf(ApiResult.Success::class.java)
+        assertThat((actual as ApiResult.Success).value).isEqualTo(apiResult.value)
+        assertThat(userRepository.findByUserId(apiResult.value)!!.firstName).isEqualTo("Manuel")
+        assertThat(userRepository.findByUserId(apiResult.value)!!.lastName).isEqualTo("Gonzalez")
+    }
+
+    @Test
+    fun `update user fails if password does not fulfill requirement`() {
+        val user = UserDto(
+            firstName = "Geovanny",
+            lastName = "Mendoza",
+            birthDate = "20.02.1999",
+            password = "Ta1&tudol3lal54e"
+        )
+        val apiResult = userService.createUser(user)
+        val actual = userService.updateUser(
+            user.copy(
+                userId = (apiResult as ApiResult.Success).value,
+                firstName = "Manuel",
+                lastName = "Mendoza",
+                password = "NOT VALID"
+            )
+        )
+
+
+        // then
+        assertThat(actual).isInstanceOf(ApiResult.Failure::class.java)
+        assertThat((actual as ApiResult.Failure).errorCode).isEqualTo(ErrorCode.MAPPING_ERROR)
+        assertThat(userRepository.findByUserId(apiResult.value)!!.firstName).isEqualTo("Geovanny")
+        assertThat(userRepository.findByUserId(apiResult.value)!!.lastName).isEqualTo("Mendoza")
     }
 }
